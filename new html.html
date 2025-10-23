@@ -1,0 +1,1066 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Chemistry Voice Hub</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        :root {
+            --primary: #8B0000;
+            --secondary: #D4AF37;
+            --accent: #2E8B57;
+            --light: #F8F9FA;
+            --dark: #343A40;
+            --gray: #6C757D;
+            --card-bg: #FFFFFF;
+            --shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+            --transition: all 0.3s ease;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #f5f7fa 0%, #e4e8ed 100%);
+            color: var(--dark);
+            line-height: 1.6;
+            min-height: 100vh;
+        }
+
+        header {
+            background: linear-gradient(135deg, var(--primary) 0%, #A52A2A 100%);
+            color: var(--secondary);
+            text-align: center;
+            padding: 1.5rem;
+            font-size: 2rem;
+            font-weight: 700;
+            box-shadow: var(--shadow);
+            position: relative;
+            overflow: hidden;
+        }
+
+        header::after {
+            content: "🧪";
+            position: absolute;
+            right: 2rem;
+            top: 50%;
+            transform: translateY(-50%);
+            font-size: 2.5rem;
+            opacity: 0.7;
+        }
+
+        nav {
+            background: var(--card-bg);
+            padding: 1rem;
+            display: flex;
+            justify-content: center;
+            gap: 1rem;
+            box-shadow: var(--shadow);
+            position: sticky;
+            top: 0;
+            z-index: 100;
+        }
+
+        .nav-btn {
+            background: transparent;
+            border: none;
+            padding: 0.8rem 1.5rem;
+            border-radius: 50px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: var(--transition);
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            color: var(--gray);
+        }
+
+        .nav-btn:hover {
+            background: rgba(139, 0, 0, 0.1);
+            color: var(--primary);
+        }
+
+        .nav-btn.active {
+            background: var(--primary);
+            color: white;
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 2rem auto;
+            padding: 0 1rem;
+        }
+
+        .tab-content {
+            display: none;
+            animation: fadeIn 0.5s ease;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(10px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        .active {
+            display: block;
+        }
+
+        .section-title {
+            font-size: 1.8rem;
+            margin-bottom: 1.5rem;
+            color: var(--primary);
+            border-left: 5px solid var(--secondary);
+            padding-left: 1rem;
+        }
+
+        .grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+            gap: 1.5rem;
+        }
+
+        .card {
+            background: var(--card-bg);
+            border-radius: 12px;
+            padding: 1.5rem;
+            box-shadow: var(--shadow);
+            transition: var(--transition);
+            border-top: 4px solid var(--secondary);
+        }
+
+        .card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 10px 20px rgba(0, 0, 0, 0.15);
+        }
+
+        .note-text {
+            margin-bottom: 1rem;
+            line-height: 1.5;
+        }
+
+        .note-date {
+            font-size: 0.85rem;
+            color: var(--gray);
+            margin-bottom: 1rem;
+        }
+
+        .interaction-bar {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-top: 1rem;
+            padding-top: 1rem;
+            border-top: 1px solid #eee;
+        }
+
+        .btn {
+            background: var(--primary);
+            color: white;
+            border: none;
+            padding: 0.6rem 1.2rem;
+            border-radius: 6px;
+            cursor: pointer;
+            font-weight: 600;
+            transition: var(--transition);
+            display: inline-flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .btn:hover {
+            background: #A52A2A;
+            transform: translateY(-2px);
+        }
+
+        .btn-secondary {
+            background: var(--gray);
+        }
+
+        .btn-secondary:hover {
+            background: #5A6268;
+        }
+
+        .btn-success {
+            background: var(--accent);
+        }
+
+        .btn-success:hover {
+            background: #247A48;
+        }
+
+        .btn-danger {
+            background: #DC3545;
+        }
+
+        .btn-danger:hover {
+            background: #C82333;
+        }
+
+        .btn-small {
+            padding: 0.4rem 0.8rem;
+            font-size: 0.85rem;
+        }
+
+        .like-btn, .dislike-btn {
+            background: none;
+            border: none;
+            cursor: pointer;
+            font-size: 1.2rem;
+            transition: var(--transition);
+            padding: 0.3rem 0.6rem;
+            border-radius: 6px;
+            display: flex;
+            align-items: center;
+            gap: 0.3rem;
+        }
+
+        .like-btn:hover {
+            background: rgba(220, 53, 69, 0.1);
+            color: #DC3545;
+        }
+
+        .dislike-btn:hover {
+            background: rgba(108, 117, 125, 0.1);
+            color: var(--gray);
+        }
+
+        .like-btn.active { 
+            color: #DC3545; 
+            background: rgba(220, 53, 69, 0.1);
+        }
+
+        .dislike-btn.active { 
+            color: var(--gray); 
+            background: rgba(108, 117, 125, 0.1);
+        }
+
+        .debounce-active {
+            pointer-events: none;
+            opacity: 0.6;
+        }
+
+        .form-group {
+            margin-bottom: 1.5rem;
+        }
+
+        .form-control {
+            width: 100%;
+            padding: 0.8rem 1rem;
+            border: 1px solid #ddd;
+            border-radius: 8px;
+            font-size: 1rem;
+            transition: var(--transition);
+        }
+
+        .form-control:focus {
+            outline: none;
+            border-color: var(--primary);
+            box-shadow: 0 0 0 3px rgba(139, 0, 0, 0.1);
+        }
+
+        textarea.form-control {
+            min-height: 150px;
+            resize: vertical;
+        }
+
+        .char-count {
+            text-align: right;
+            font-size: 0.85rem;
+            color: var(--gray);
+            margin-top: 0.3rem;
+        }
+
+        .gallery-item {
+            position: relative;
+            border-radius: 12px;
+            overflow: hidden;
+            box-shadow: var(--shadow);
+            transition: var(--transition);
+        }
+
+        .gallery-item:hover {
+            transform: scale(1.03);
+        }
+
+        .gallery-item img {
+            width: 100%;
+            height: 200px;
+            object-fit: cover;
+            display: block;
+        }
+
+        .gallery-caption {
+            padding: 1rem;
+            background: var(--card-bg);
+        }
+
+        .admin-panel {
+            background: var(--card-bg);
+            border-radius: 12px;
+            padding: 2rem;
+            box-shadow: var(--shadow);
+            margin-top: 2rem;
+        }
+
+        .stats {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 1rem;
+            margin-bottom: 2rem;
+        }
+
+        .stat-card {
+            background: white;
+            padding: 1.5rem;
+            border-radius: 8px;
+            text-align: center;
+            box-shadow: var(--shadow);
+        }
+
+        .stat-number {
+            font-size: 2rem;
+            font-weight: 700;
+            color: var(--primary);
+        }
+
+        .stat-label {
+            color: var(--gray);
+            font-size: 0.9rem;
+        }
+
+        .loading {
+            display: none;
+            text-align: center;
+            padding: 2rem;
+        }
+
+        .spinner {
+            border: 4px solid rgba(0, 0, 0, 0.1);
+            border-left-color: var(--primary);
+            border-radius: 50%;
+            width: 40px;
+            height: 40px;
+            animation: spin 1s linear infinite;
+            margin: 0 auto 1rem;
+        }
+
+        @keyframes spin {
+            to { transform: rotate(360deg); }
+        }
+
+        .alert {
+            padding: 1rem;
+            border-radius: 8px;
+            margin-bottom: 1rem;
+            display: none;
+        }
+
+        .alert-success {
+            background: #D4EDDA;
+            color: #155724;
+            border: 1px solid #C3E6CB;
+        }
+
+        .alert-error {
+            background: #F8D7DA;
+            color: #721C24;
+            border: 1px solid #F5C6CB;
+        }
+
+        .empty-state {
+            text-align: center;
+            padding: 3rem 1rem;
+            color: var(--gray);
+        }
+
+        .empty-state i {
+            font-size: 3rem;
+            margin-bottom: 1rem;
+            color: #DEE2E6;
+        }
+
+        .tab-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 1.5rem;
+        }
+
+        .search-box {
+            display: flex;
+            gap: 0.5rem;
+        }
+
+        .search-box input {
+            flex: 1;
+        }
+
+        .file-info {
+            font-size: 0.85rem;
+            color: var(--gray);
+            margin-top: 0.3rem;
+        }
+
+        .admin-badge {
+            background: var(--primary);
+            color: white;
+            padding: 0.2rem 0.5rem;
+            border-radius: 4px;
+            font-size: 0.7rem;
+            margin-left: 0.5rem;
+        }
+
+        .admin-only {
+            display: none;
+        }
+
+        @media (max-width: 768px) {
+            .grid {
+                grid-template-columns: 1fr;
+            }
+            
+            nav {
+                flex-wrap: wrap;
+            }
+            
+            .tab-header {
+                flex-direction: column;
+                align-items: flex-start;
+                gap: 1rem;
+            }
+            
+            .search-box {
+                width: 100%;
+            }
+        }
+    </style>
+</head>
+<body>
+    <header>Chemistry Voice Hub</header>
+    <nav>
+        <button class="nav-btn active" onclick="showTab('home')"><i class="fas fa-home"></i> Beranda</button>
+        <button class="nav-btn" onclick="showTab('send')"><i class="fas fa-paper-plane"></i> Kirim Note</button>
+        <button class="nav-btn" onclick="showTab('history')"><i class="fas fa-history"></i> History</button>
+        <button class="nav-btn" onclick="showTab('admin')"><i class="fas fa-user-shield"></i> Admin</button>
+    </nav>
+    
+    <div class="container">
+        <div id="home" class="tab-content active">
+            <div class="tab-header">
+                <h2 class="section-title"><i class="fas fa-check-circle"></i> Notes Disetujui</h2>
+                <div class="search-box">
+                    <input type="text" class="form-control" placeholder="Cari notes..." id="search-notes">
+                    <button class="btn" onclick="searchNotes()"><i class="fas fa-search"></i></button>
+                </div>
+            </div>
+            <div id="approved-notes" class="grid"></div>
+        </div>
+        
+        <div id="send" class="tab-content">
+            <h2 class="section-title"><i class="fas fa-edit"></i> Kirim Note Anonim</h2>
+            <div class="alert alert-success" id="success-alert">Note berhasil dikirim! Menunggu moderasi admin.</div>
+            <form id="note-form">
+                <div class="form-group">
+                    <textarea class="form-control" placeholder="Tulis note Anda di sini..." maxlength="500" required id="note-text"></textarea>
+                    <div class="char-count"><span id="char-count">0</span>/500 karakter</div>
+                </div>
+                <button type="submit" class="btn"><i class="fas fa-paper-plane"></i> Kirim Note</button>
+            </form>
+            <div class="loading" id="loading-send">
+                <div class="spinner"></div>
+                <p>Mengirim note...</p>
+            </div>
+        </div>
+        
+        <div id="history" class="tab-content">
+            <h2 class="section-title"><i class="fas fa-images"></i> Gallery Dokumentasi</h2>
+            <div id="public-gallery" class="grid"></div>
+            
+            <!-- PANEL UPLOAD FOTO HANYA UNTUK ADMIN -->
+            <div class="admin-only" id="upload-panel">
+                <h2 class="section-title"><i class="fas fa-upload"></i> Upload Foto (Admin Only)</h2>
+                <form id="upload-form">
+                    <div class="form-group">
+                        <input type="file" class="form-control" accept="image/*" required id="image-upload">
+                        <div class="file-info" id="file-info">Maksimal 5MB</div>
+                    </div>
+                    <div class="form-group">
+                        <textarea class="form-control" placeholder="Deskripsi foto..." required id="image-desc"></textarea>
+                    </div>
+                    <button type="submit" class="btn"><i class="fas fa-upload"></i> Upload Foto</button>
+                </form>
+            </div>
+        </div>
+        
+        <div id="admin" class="tab-content">
+            <h2 class="section-title"><i class="fas fa-user-cog"></i> Panel Admin</h2>
+            
+            <div id="admin-login">
+                <div class="admin-panel">
+                    <h3><i class="fas fa-lock"></i> Masuk Sebagai Admin</h3>
+                    <div class="form-group">
+                        <input type="password" class="form-control" placeholder="Masukkan password admin" id="admin-password">
+                    </div>
+                    <button class="btn" onclick="checkAdmin()"><i class="fas fa-sign-in-alt"></i> Masuk</button>
+                </div>
+            </div>
+            
+            <div id="admin-panel" style="display: none;">
+                <div class="stats">
+                    <div class="stat-card">
+                        <div class="stat-number" id="total-notes">0</div>
+                        <div class="stat-label">Total Notes</div>
+                    </div>
+                    <div class="stat-card">
+                        <div class="stat-number" id="pending-notes-count">0</div>
+                        <div class="stat-label">Menunggu Moderasi</div>
+                    </div>
+                    <div class="stat-card">
+                        <div class="stat-number" id="total-images">0</div>
+                        <div class="stat-label">Total Foto</div>
+                    </div>
+                </div>
+                
+                <div class="admin-panel">
+                    <h3><i class="fas fa-tasks"></i> Moderasi Notes</h3>
+                    <div id="pending-notes" class="grid"></div>
+                </div>
+                
+                <div class="admin-panel">
+                    <h3><i class="fas fa-trash-alt"></i> Kelola Notes Disetujui</h3>
+                    <div id="approved-notes-admin" class="grid"></div>
+                </div>
+
+                <!-- Panel Kelola Foto -->
+                <div class="admin-panel">
+                    <h3><i class="fas fa-images"></i> Kelola Gallery Foto</h3>
+                    <div id="gallery-admin" class="grid"></div>
+                </div>
+                
+                <button class="btn btn-secondary" onclick="logoutAdmin()"><i class="fas fa-sign-out-alt"></i> Logout Admin</button>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // Data initialization
+        let approvedNotes = JSON.parse(localStorage.getItem('approvedNotes')) || [];
+        let pendingNotes = JSON.parse(localStorage.getItem('pendingNotes')) || [];
+        let gallery = JSON.parse(localStorage.getItem('gallery')) || [];
+        let isAdminLoggedIn = sessionStorage.getItem('adminLoggedIn') === 'true';
+
+        // Add IDs if not present
+        approvedNotes.forEach(note => { if (!note.id) note.id = Date.now() + Math.random(); });
+        pendingNotes.forEach(note => { if (!note.id) note.id = Date.now() + Math.random(); });
+        gallery.forEach(item => { 
+            if (!item.id) item.id = Date.now() + Math.random();
+            // Tambah info uploader jika belum ada
+            if (!item.uploader) item.uploader = 'admin';
+        });
+
+        // Search functionality
+        let searchTimeout;
+
+        function searchNotes() {
+            const query = document.getElementById('search-notes').value.toLowerCase();
+            const filteredNotes = approvedNotes.filter(note => 
+                note.text.toLowerCase().includes(query)
+            );
+            renderApprovedNotes(filteredNotes);
+        }
+
+        // Real-time search with debounce
+        document.getElementById('search-notes').addEventListener('input', function() {
+            clearTimeout(searchTimeout);
+            searchTimeout = setTimeout(searchNotes, 300);
+        });
+
+        // DOM Content Loaded
+        document.addEventListener('DOMContentLoaded', function() {
+            renderApprovedNotes();
+            renderGallery();
+            updateStats();
+            
+            // Character counter for note form
+            document.getElementById('note-text').addEventListener('input', function() {
+                document.getElementById('char-count').textContent = this.value.length;
+            });
+            
+            // File upload info
+            document.getElementById('image-upload').addEventListener('change', function() {
+                const file = this.files[0];
+                if (file) {
+                    const fileSize = (file.size / (1024 * 1024)).toFixed(2);
+                    document.getElementById('file-info').textContent = 
+                        `File: ${file.name} (${fileSize} MB)`;
+                } else {
+                    document.getElementById('file-info').textContent = 'Maksimal 5MB';
+                }
+            });
+            
+            // Show admin panel if already logged in
+            if (isAdminLoggedIn) {
+                showAdminFeatures();
+            } else {
+                hideAdminFeatures();
+            }
+        });
+
+        function showTab(tabId) {
+            // Update nav buttons
+            document.querySelectorAll('.nav-btn').forEach(btn => btn.classList.remove('active'));
+            event.currentTarget.classList.add('active');
+            
+            // Show selected tab
+            document.querySelectorAll('.tab-content').forEach(tab => tab.classList.remove('active'));
+            document.getElementById(tabId).classList.add('active');
+            
+            // Render content based on tab
+            if (tabId === 'home') renderApprovedNotes();
+            if (tabId === 'history') renderGallery();
+            if (tabId === 'admin') {
+                updateStats();
+                if (isAdminLoggedIn) {
+                    renderPendingNotes();
+                    renderApprovedNotesAdmin();
+                    renderGalleryAdmin();
+                }
+            }
+        }
+
+        function renderApprovedNotes(notes = null) {
+            const container = document.getElementById('approved-notes');
+            const notesToRender = notes || approvedNotes;
+            
+            if (notesToRender.length === 0) {
+                container.innerHTML = `
+                    <div class="empty-state">
+                        <i class="fas fa-sticky-note"></i>
+                        <h3>${notes ? 'Tidak ada hasil pencarian' : 'Belum ada notes'}</h3>
+                        <p>${notes ? 'Coba dengan kata kunci lain' : 'Notes yang disetujui akan muncul di sini'}</p>
+                    </div>
+                `;
+                return;
+            }
+            
+            // Sort by likes (descending)
+            const sortedNotes = [...notesToRender].sort((a, b) => (b.likes || 0) - (a.likes || 0));
+            
+            container.innerHTML = sortedNotes.map(note => `
+                <div class="card">
+                    <div class="note-text">${note.text}</div>
+                    <div class="note-date"><i class="far fa-clock"></i> ${note.date}</div>
+                    <div class="interaction-bar">
+                        <div>
+                            <button class="like-btn ${note.userAction === 'like' ? 'active' : ''}" onclick="toggleLike(${note.id}, 'note')">
+                                <i class="fas fa-heart"></i> ${note.likes || 0}
+                            </button>
+                            <button class="dislike-btn ${note.userAction === 'dislike' ? 'active' : ''}" onclick="toggleDislike(${note.id}, 'note')">
+                                <i class="fas fa-thumbs-down"></i> ${note.dislikes || 0}
+                            </button>
+                        </div>
+                        <div>
+                            <span class="badge"><i class="fas fa-check-circle"></i> Disetujui</span>
+                        </div>
+                    </div>
+                </div>
+            `).join('');
+        }
+
+        function renderGallery() {
+            const container = document.getElementById('public-gallery');
+            
+            if (gallery.length === 0) {
+                container.innerHTML = `
+                    <div class="empty-state">
+                        <i class="fas fa-images"></i>
+                        <h3>Belum ada foto</h3>
+                        <p>Foto dokumentasi akan muncul di sini</p>
+                    </div>
+                `;
+                return;
+            }
+            
+            container.innerHTML = gallery.map(item => `
+                <div class="gallery-item">
+                    <img src="${item.src}" alt="Dokumentasi">
+                    <div class="gallery-caption">
+                        <p>${item.desc}</p>
+                        <div class="interaction-bar">
+                            <button class="like-btn ${item.userAction === 'like' ? 'active' : ''}" onclick="toggleLike(${item.id}, 'gallery')">
+                                <i class="fas fa-heart"></i> ${item.likes || 0}
+                            </button>
+                            <button class="dislike-btn ${item.userAction === 'dislike' ? 'active' : ''}" onclick="toggleDislike(${item.id}, 'gallery')">
+                                <i class="fas fa-thumbs-down"></i> ${item.dislikes || 0}
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            `).join('');
+        }
+
+        // Render gallery untuk admin dengan tombol hapus
+        function renderGalleryAdmin() {
+            const container = document.getElementById('gallery-admin');
+            
+            if (gallery.length === 0) {
+                container.innerHTML = `
+                    <div class="empty-state">
+                        <i class="fas fa-images"></i>
+                        <h3>Belum ada foto di gallery</h3>
+                        <p>Foto yang diupload akan muncul di sini</p>
+                    </div>
+                `;
+                return;
+            }
+            
+            container.innerHTML = gallery.map((item, index) => `
+                <div class="gallery-item">
+                    <img src="${item.src}" alt="Dokumentasi">
+                    <div class="gallery-caption">
+                        <p>${item.desc} <span class="admin-badge">Admin</span></p>
+                        <div class="interaction-bar">
+                            <div>
+                                <span><i class="fas fa-heart"></i> ${item.likes || 0}</span>
+                                <span><i class="fas fa-thumbs-down"></i> ${item.dislikes || 0}</span>
+                            </div>
+                            <button class="btn btn-danger btn-small" onclick="deleteGalleryItem(${index})" title="Hapus Foto">
+                                <i class="fas fa-trash"></i> Hapus
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            `).join('');
+        }
+
+        // Fungsi untuk menghapus item gallery
+        function deleteGalleryItem(index) {
+            if (confirm('Apakah Anda yakin ingin menghapus foto ini?')) {
+                gallery.splice(index, 1);
+                localStorage.setItem('gallery', JSON.stringify(gallery));
+                renderGallery();
+                renderGalleryAdmin();
+                updateStats();
+                
+                // Show success message
+                const alert = document.createElement('div');
+                alert.className = 'alert alert-success';
+                alert.textContent = 'Foto berhasil dihapus!';
+                document.getElementById('gallery-admin').prepend(alert);
+                setTimeout(() => alert.remove(), 3000);
+            }
+        }
+
+        function renderPendingNotes() {
+            const container = document.getElementById('pending-notes');
+            
+            if (pendingNotes.length === 0) {
+                container.innerHTML = `
+                    <div class="empty-state">
+                        <i class="fas fa-inbox"></i>
+                        <h3>Tidak ada notes menunggu</h3>
+                        <p>Semua notes telah dimoderasi</p>
+                    </div>
+                `;
+                return;
+            }
+            
+            container.innerHTML = pendingNotes.map((note, index) => `
+                <div class="card">
+                    <div class="note-text">${note.text}</div>
+                    <div class="note-date"><i class="far fa-clock"></i> ${note.date}</div>
+                    <div class="interaction-bar">
+                        <button class="btn btn-success" onclick="approveNote(${index})">
+                            <i class="fas fa-check"></i> Setujui
+                        </button>
+                        <button class="btn btn-danger" onclick="rejectNote(${index})">
+                            <i class="fas fa-times"></i> Tolak
+                        </button>
+                    </div>
+                </div>
+            `).join('');
+        }
+
+        function renderApprovedNotesAdmin() {
+            const container = document.getElementById('approved-notes-admin');
+            
+            if (approvedNotes.length === 0) {
+                container.innerHTML = `
+                    <div class="empty-state">
+                        <i class="fas fa-sticky-note"></i>
+                        <h3>Belum ada notes disetujui</h3>
+                        <p>Notes yang disetujui akan muncul di sini</p>
+                    </div>
+                `;
+                return;
+            }
+            
+            container.innerHTML = approvedNotes.map((note, index) => `
+                <div class="card">
+                    <div class="note-text">${note.text}</div>
+                    <div class="note-date"><i class="far fa-clock"></i> ${note.date}</div>
+                    <div class="interaction-bar">
+                        <div>
+                            <span><i class="fas fa-heart"></i> ${note.likes || 0}</span>
+                            <span><i class="fas fa-thumbs-down"></i> ${note.dislikes || 0}</span>
+                        </div>
+                        <button class="btn btn-danger btn-small" onclick="deleteApprovedNote(${index})">
+                            <i class="fas fa-trash"></i> Hapus
+                        </button>
+                    </div>
+                </div>
+            `).join('');
+        }
+
+        function toggleLike(id, type) {
+            // Debounce protection
+            const btn = event.target.closest('button');
+            btn.classList.add('debounce-active');
+            
+            const list = type === 'note' ? approvedNotes : gallery;
+            const item = list.find(i => i.id === id);
+            
+            if (item.userAction === 'like') {
+                item.likes = (item.likes || 0) - 1;
+                item.userAction = null;
+            } else {
+                if (item.userAction === 'dislike') item.dislikes = (item.dislikes || 0) - 1;
+                item.likes = (item.likes || 0) + 1;
+                item.userAction = 'like';
+            }
+            
+            localStorage.setItem(type === 'note' ? 'approvedNotes' : 'gallery', JSON.stringify(list));
+            
+            if (type === 'note') renderApprovedNotes();
+            else renderGallery();
+            
+            if (isAdminLoggedIn) updateStats();
+            
+            // Remove debounce after animation
+            setTimeout(() => btn.classList.remove('debounce-active'), 500);
+        }
+
+        function toggleDislike(id, type) {
+            // Debounce protection
+            const btn = event.target.closest('button');
+            btn.classList.add('debounce-active');
+            
+            const list = type === 'note' ? approvedNotes : gallery;
+            const item = list.find(i => i.id === id);
+            
+            if (item.userAction === 'dislike') {
+                item.dislikes = (item.dislikes || 0) - 1;
+                item.userAction = null;
+            } else {
+                if (item.userAction === 'like') item.likes = (item.likes || 0) - 1;
+                item.dislikes = (item.dislikes || 0) + 1;
+                item.userAction = 'dislike';
+            }
+            
+            localStorage.setItem(type === 'note' ? 'approvedNotes' : 'gallery', JSON.stringify(list));
+            
+            if (type === 'note') renderApprovedNotes();
+            else renderGallery();
+            
+            if (isAdminLoggedIn) updateStats();
+            
+            // Remove debounce after animation
+            setTimeout(() => btn.classList.remove('debounce-active'), 500);
+        }
+
+        // Note form submission
+        document.getElementById('note-form').addEventListener('submit', function(e) {
+            e.preventDefault();
+            const text = document.getElementById('note-text').value.trim();
+            
+            if (text.length === 0) {
+                alert('Note tidak boleh kosong!');
+                return;
+            }
+            
+            if (text.length > 500) {
+                alert('Note terlalu panjang! Maksimal 500 karakter.');
+                return;
+            }
+            
+            // Show loading
+            document.getElementById('loading-send').style.display = 'block';
+            
+            // Simulate API call delay
+            setTimeout(() => {
+                pendingNotes.push({
+                    text,
+                    date: new Date().toLocaleString('id-ID'),
+                    id: Date.now() + Math.random()
+                });
+                
+                localStorage.setItem('pendingNotes', JSON.stringify(pendingNotes));
+                
+                // Show success message
+                document.getElementById('success-alert').style.display = 'block';
+                
+                // Reset form
+                document.getElementById('note-form').reset();
+                document.getElementById('char-count').textContent = '0';
+                
+                // Hide loading
+                document.getElementById('loading-send').style.display = 'none';
+                
+                // Hide success message after 5 seconds
+                setTimeout(() => {
+                    document.getElementById('success-alert').style.display = 'none';
+                }, 5000);
+                
+                if (isAdminLoggedIn) updateStats();
+            }, 1000);
+        });
+
+        // Image upload form with validation
+        document.getElementById('upload-form').addEventListener('submit', function(e) {
+            e.preventDefault();
+            const file = document.getElementById('image-upload').files[0];
+            const desc = document.getElementById('image-desc').value.trim();
+            
+            if (!file) {
+                alert('Pilih file gambar terlebih dahulu!');
+                return;
+            }
+            
+            if (file.size > 5 * 1024 * 1024) { // 5MB
+                alert('File terlalu besar! Maksimal 5MB.');
+                return;
+            }
+            
+            if (desc.length === 0) {
+                alert('Deskripsi foto tidak boleh kosong!');
+                return;
+            }
+            
+            const reader = new FileReader();
+            reader.onload = function() {
+                gallery.push({
+                    src: reader.result,
+                    desc,
+                    id: Date.now() + Math.random(),
+                    likes: 0,
+                    dislikes: 0,
+                    userAction: null,
+                    uploader: 'admin', // Tandai sebagai upload oleh admin
+                    uploadDate: new Date().toLocaleString('id-ID')
+                });
+                
+                localStorage.setItem('gallery', JSON.stringify(gallery));
+                renderGallery();
+                if (isAdminLoggedIn) renderGalleryAdmin();
+                document.getElementById('upload-form').reset();
+                document.getElementById('file-info').textContent = 'Maksimal 5MB';
+                
+                if (isAdminLoggedIn) updateStats();
+
+                // Show success message
+                const alert = document.createElement('div');
+                alert.className = 'alert alert-success';
+                alert.textContent = 'Foto berhasil diupload!';
+                document.getElementById('upload-form').prepend(alert);
+                setTimeout(() => alert.remove(), 3000);
+            };
+            reader.readAsDataURL(file);
+        });
+
+        function checkAdmin() {
+            const password = document.getElementById('admin-password').value;
+            
+            // In a real app, this would be a secure server-side check
+            if (password === 'Ketupel 2 periode') {
+                isAdminLoggedIn = true;
+                sessionStorage.setItem('adminLoggedIn', 'true');
+                showAdminFeatures();
+            } else {
+                alert('Password admin salah!');
+            }
+        }
+
+        function showAdminFeatures() {
+            document.getElementById('admin-login').style.display = 'none';
+            document.getElementById('admin-panel').style.display = 'block';
+            document.getElementById('upload-panel').style.display = 'block';
+            
+            updateStats();
+            renderPendingNotes();
+            renderApprovedNotesAdmin();
+            renderGalleryAdmin();
+        }
+
+        function hideAdminFeatures() {
+            document.getElementById('admin-login').style.display = 'block';
+            document.getElementById('admin-panel').style.display = 'none';
+            document.getElementById('upload-panel').style.display = 'none';
+        }
+
+        function logoutAdmin() {
+            isAdminLoggedIn = false;
+            sessionStorage.removeItem('adminLoggedIn');
+            hideAdminFeatures();
+            document.getElementById('admin-password').value = '';
+        }
+
+        function approveNote(index) {
+            const note = pendingNotes[index];
+            note.likes = 0;
+            note.dislikes = 0;
+            note.userAction = null;
+            
+            approvedNotes.push(note);
+            pendingNotes.splice(index, 1);
+            
+            localStorage.setItem('approvedNotes', JSON.stringify(approvedNotes));
+            localStorage.setItem('pendingNotes', JSON.stringify(pendingNotes));
+            
+            renderPendingNotes();
+            renderApprovedNotes();
+            updateStats();
+        }
+
+        function rejectNote(index) {
+            pendingNotes.splice(index, 1);
+            localStorage.setItem('pendingNotes', JSON.stringify(pendingNotes));
+            renderPendingNotes();
+            updateStats();
+        }
+
+        function deleteApprovedNote(index) {
+            approvedNotes.splice(index, 1);
+            localStorage.setItem('approvedNotes', JSON.stringify(approvedNotes));
+            renderApprovedNotes();
+            renderApprovedNotesAdmin();
+            updateStats();
+        }
+
+        function updateStats() {
+            document.getElementById('total-notes').textContent = approvedNotes.length;
+            document.getElementById('pending-notes-count').textContent = pendingNotes.length;
+            document.getElementById('total-images').textContent = gallery.length;
+        }
+
+        // Simulated backend API calls (placeholder for real implementation)
+        async function fetchNotes() {
+            // Example: return await fetch('/api/notes').then(res => res.json());
+            return approvedNotes;
+        }
+
+        async function submitNote(text) {
+            // Example: return await fetch('/api/notes', {
+            //     method: 'POST',
+            //     headers: { 'Content-Type': 'application/json' },
+            //     body: JSON.stringify({ text })
+            // }).then(res => res.json());
+            return { success: true, id: Date.now() };
+        }
+    </script>
+</body>
+</html>
